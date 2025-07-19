@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis IPA: Pengenalan Sel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            position: relative;
+        }
+        .header-main-title {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        h1 {
+            color: #0056b3;
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .author-info {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .author-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .author-info p:first-child {
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+        }
+        .header-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            z-index: 10;
+        }
+        .left-header-image {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            z-index: 10;
+        }
+        h2 {
+            color: #0056b3;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        #timeLimitDisplay {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 5px;
+            margin-top: 50px;
+        }
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            display: none;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .cooldown-message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d9534f;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #d9534f;
+            border-radius: 5px;
+            background-color: #ffe0e0;
+        }
+        @media (max-width: 600px) {
+            .header-image, .left-header-image {
+                position: static;
+                margin: 10px auto;
+                display: block;
+            }
+            .header-main-title, .author-info {
+                text-align: center;
+            }
+            .container {
+                position: static;
+            }
+            #timeLimitDisplay {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-main-title">
+            <h1>Pengenalan Sel</h1>
+        </div>
+        <div class="author-info">
+            <p>By. Torus Manuntun Nababan, S.Pd.,M.Pd</p>
+            <p>(Pengembang Soal Kuis)</p>
+        </div>
+        <img src="logo.png" alt="Foto Torus Manuntun Nababan, S.Pd.,M.Pd" class="header-image">
+        <img src="jas.jpg" alt="Ilustrasi Jas" class="left-header-image">
+
+        <p id="timeLimitDisplay">Waktu pengerjaan: <span id="timeLimit">40</span> menit</p>
+        <div id="timer">Waktu tersisa: 40:00</div>
+
+        <form id="quizForm">
+            <h2>Identitas Siswa</h2>
+            <div class="form-group">
+                <label for="sekolah">Nama Sekolah:</label>
+                <input type="text" id="sekolah" name="sekolah" required>
+            </div>
+            <div class="form-group">
+                <label for="nama">Nama Siswa:</label>
+                <input type="text" id="nama" name="nama" required>
+            </div>
+            <div class="form-group">
+                <label for="kelas">Kelas:</label>
+                <input type="text" id="kelas" name="kelas" required>
+            </div>
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <select id="semester" name="semester" required>
+                    <option value="">Pilih Semester</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tahunAjaran">Tahun Ajaran:</label>
+                <input type="text" id="tahunAjaran" name="tahunAjaran" placeholder="Contoh: 2024/2025" required>
+            </div>
+
+            <hr>
+
+            <h2>Soal Kuis</h2>
+            <div id="questionsContainer">
+            </div>
+
+            <button type="submit">Selesai Kuis</button>
+        </form>
+
+        <div id="results">
+            <h2>Hasil Kuis</h2>
+            <p><strong>Nama Siswa:</strong> <span id="resultNama"></span></p>
+            <p><strong>Skor Anda:</strong> <span id="score"></span></p>
+            <p id="message"></p>
+            <h3>Detail Jawaban:</h3>
+            <div id="answerDetails">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Sel dan Mikroskop (40 soal)
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Apa bagian paling kecil dari makhluk hidup yang berfungsi menjalankan kehidupan?",
+                options: ["Organ", "Jaringan", "Sel", "Atom"],
+                answer: "Sel"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Mengapa kita membutuhkan mikroskop untuk melihat sel?",
+                options: ["Karena sel sangat besar", "Karena sel berwarna-warni", "Karena sel terlalu kecil untuk dilihat mata telanjang", "Karena sel tidak terlihat di siang hari"],
+                answer: "Karena sel terlalu kecil untuk dilihat mata telanjang"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Siapa ilmuwan pertama yang menemukan 'cellulae' (sel) dari gabus?",
+                options: ["Louis Pasteur", "Gregor Mendel", "Robert Hooke", "Anton van Leeuwenhoek"],
+                answer: "Robert Hooke"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Alat yang berfungsi untuk memperbesar objek yang sangat kecil sehingga bisa dilihat disebut...",
+                options: ["Teleskop", "Lup", "Mikroskop", "Teropong"],
+                answer: "Mikroskop"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Jika kamu melihat air di bawah mikroskop dan melihat banyak 'makhluk' kecil bergerak, itu adalah organisme...",
+                options: ["Virus", "Bersel satu", "Bersel banyak", "Mineral"],
+                answer: "Bersel satu"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Mikroskop yang menggunakan cahaya untuk melihat objek disebut mikroskop...",
+                options: ["Elektron", "Cahaya", "UV", "Stereo"],
+                answer: "Mikroskop cahaya"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Bagian mikroskop yang berfungsi untuk mengatur jumlah cahaya yang masuk ke objek adalah...",
+                options: ["Lensa okuler", "Lensa objektif", "Diafragma", "Meja preparat"],
+                answer: "Diafragma"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Jika kamu ingin melihat objek dengan perbesaran yang lebih besar, lensa apa yang perlu kamu putar pada mikroskop?",
+                options: ["Lensa okuler", "Lensa objektif", "Cermin", "Revolver"],
+                answer: "Lensa objektif"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Untuk membersihkan lensa mikroskop, kita harus menggunakan...",
+                options: ["Kain baju", "Tisu biasa", "Kertas lensa khusus", "Jari tangan"],
+                answer: "Kertas lensa khusus"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Bayangan objek yang kita lihat melalui mikroskop cahaya bersifat...",
+                options: ["Nyata dan tegak", "Nyata dan terbalik", "Semu dan tegak", "Semu dan terbalik"],
+                answer: "Semu dan terbalik"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Mikroskop yang dapat memperbesar objek hingga jutaan kali adalah...",
+                options: ["Mikroskop cahaya", "Mikroskop elektron", "Lup", "Teleskop"],
+                answer: "Mikroskop elektron"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Ketika kamu memutar pengatur kasar pada mikroskop, meja preparat akan bergerak naik turun dengan...",
+                options: ["Sangat lambat", "Cepat", "Tidak bergerak", "Berputar"],
+                answer: "Cepat"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Apa fungsi utama cermin pada mikroskop?",
+                options: ["Memperbesar gambar", "Memantulkan cahaya ke objek", "Tempat meletakkan objek", "Mengatur fokus"],
+                answer: "Memantulkan cahaya ke objek"
+            },
+            {
+                topic: "Sel dan Mikroskop",
+                question: "Untuk apa kita perlu meneteskan air saat membuat preparat basah untuk mikroskop?",
+                options: ["Agar objek wangi", "Agar objek tidak kering", "Agar objek berwarna", "Agar objek lebih besar"],
+                answer: "Agar objek tidak kering"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Bagian sel tumbuhan yang berfungsi sebagai 'penghasil makanan' (tempat fotosintesis) adalah...",
+                options: ["Mitokondria", "Ribosom", "Kloroplas", "Vakuola"],
+                answer: "Kloroplas"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Jika kamu melihat sel-sel daun di bawah mikroskop, kamu akan menemukan dinding sel. Apakah sel hewan juga memiliki dinding sel?",
+                options: ["Ya, selalu", "Tidak, tidak pernah", "Terkadang ada", "Hanya beberapa jenis"],
+                answer: "Tidak, tidak pernah"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Ketika kamu makan nasi, energi yang kamu dapatkan berasal dari proses di dalam sel-sel tubuhmu. Organel apa yang bertanggung jawab menghasilkan energi tersebut?",
+                options: ["Nukleus", "Sitoplasma", "Mitokondria", "Retikulum endoplasma"],
+                answer: "Mitokondria"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Vakuola pada sel tumbuhan ukurannya lebih besar daripada vakuola pada sel hewan. Apa fungsi utama vakuola besar pada sel tumbuhan?",
+                options: ["Tempat menyimpan cadangan makanan dan air", "Tempat produksi protein", "Pusat pengendali sel", "Pemberi warna pada bunga"],
+                answer: "Tempat menyimpan cadangan makanan dan air"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Bagian sel yang berfungsi sebagai 'otak' atau pusat pengendali semua aktivitas sel adalah...",
+                options: ["Membran sel", "Dinding sel", "Nukleus (inti sel)", "Sitoplasma"],
+                answer: "Nukleus (inti sel)"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Ketika kamu mencubit kulitmu, sel-sel kulitmu akan terasa lentur. Ini karena sel hewan memiliki bagian terluar yang disebut...",
+                options: ["Dinding sel", "Membran sel", "Kloroplas", "Vakuola"],
+                answer: "Membran sel"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Mengapa sel tumbuhan biasanya berbentuk lebih kaku dan teratur dibandingkan sel hewan?",
+                options: ["Karena mereka tidak bergerak", "Karena memiliki dinding sel", "Karena ukurannya lebih besar", "Karena ada kloroplas"],
+                answer: "Karena memiliki dinding sel"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Kamu melihat anjing peliharaanmu berlari kencang. Sel-sel otot anjing membutuhkan banyak energi. Organel yang banyak ditemukan di sel otot adalah...",
+                options: ["Kloroplas", "Dinding sel", "Vakuola", "Mitokondria"],
+                answer: "Mitokondria"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Jika kamu mengamati sel bawang merah di mikroskop, kamu tidak akan menemukan kloroplas. Mengapa demikian?",
+                options: ["Karena bawang merah tidak hidup", "Karena bawang merah tidak berfotosintesis (bagian umbi)", "Karena selnya terlalu kecil", "Karena itu bukan sel tumbuhan"],
+                answer: "Karena bawang merah tidak berfotosintesis (bagian umbi)"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Struktur yang hanya ada pada sel tumbuhan dan berfungsi melindungi sel serta memberikan bentuk yang tetap adalah...",
+                options: ["Membran sel", "Nukleus", "Dinding sel", "Sitoplasma"],
+                answer: "Dinding sel"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Perbedaan utama antara sel hewan dan sel tumbuhan yang bisa kamu lihat dengan jelas di bawah mikroskop adalah keberadaan ____ dan ____ pada sel tumbuhan.",
+                options: ["Nukleus dan mitokondria", "Sitoplasma dan membran sel", "Dinding sel dan kloroplas", "Vakuola dan ribosom"],
+                answer: "Dinding sel dan kloroplas"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Sitoplasma adalah cairan kental di dalam sel tempat organel-organel sel berada. Sitoplasma dapat diibaratkan sebagai...",
+                options: ["Dinding rumah", "Lantai rumah", "Kolam renang", "Atap rumah"],
+                answer: "Kolam renang"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Membran sel memiliki fungsi penting untuk mengatur zat apa saja yang bisa masuk dan keluar dari sel. Fungsi ini mirip dengan...",
+                options: ["Pintu rumah", "Dinding rumah", "Jendela", "Atap rumah"],
+                answer: "Pintu rumah"
+            },
+            {
+                topic: "Sel Hewan dan Sel Tumbuhan",
+                question: "Sel-sel tumbuhan hijau dapat membuat makanannya sendiri melalui proses fotosintesis, sedangkan sel hewan tidak bisa. Organel apa yang memungkinkan sel tumbuhan melakukan fotosintesis?",
+                options: ["Mitokondria", "Ribosom", "Kloroplas", "Lisosom"],
+                answer: "Kloroplas"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Sel-sel yang memiliki bentuk dan fungsi yang sama akan berkumpul membentuk...",
+                options: ["Organ", "Sistem organ", "Jaringan", "Organisme"],
+                answer: "Jaringan"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Ketika kamu mencubit kulit, kamu merasakan nyeri. Ini karena ada sel-sel yang berfungsi khusus untuk menerima rangsangan. Sel tersebut adalah...",
+                options: ["Sel otot", "Sel darah", "Sel saraf", "Sel tulang"],
+                answer: "Sel saraf"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Untuk berjalan, otot-ototmu berkontraksi. Jenis sel yang bertanggung jawab untuk gerakan tubuh adalah...",
+                options: ["Sel darah merah", "Sel kulit", "Sel otot", "Sel tulang"],
+                answer: "Sel otot"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Saat kamu berjemur di bawah sinar matahari, kulitmu bisa menjadi lebih gelap. Ini karena sel-sel kulit tertentu menghasilkan pigmen. Sel kulit ini disebut...",
+                options: ["Sel saraf", "Melanosit", "Sel otot", "Sel tulang"],
+                answer: "Melanosit"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Pernahkah kamu melihat tanaman yang layu lalu kembali segar setelah disiram? Ini karena sel-sel pada batang dan daun tumbuhan memiliki fungsi khusus untuk mengangkut air dan nutrisi. Sel ini membentuk jaringan...",
+                options: ["Jaringan epidermis", "Jaringan pengangkut (xilem dan floem)", "Jaringan penyokong", "Jaringan dasar"],
+                answer: "Jaringan pengangkut (xilem dan floem)"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Di dalam darahmu ada sel-sel yang bertugas mengangkut oksigen ke seluruh tubuh. Sel ini adalah...",
+                options: ["Sel darah putih", "Sel trombosit", "Sel darah merah", "Sel lemak"],
+                answer: "Sel darah merah"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Sel-sel akar pada tumbuhan memiliki bentuk khusus untuk menyerap air dan mineral dari tanah. Bentuk yang mendukung fungsi ini adalah...",
+                options: ["Bulat", "Panjang dengan rambut akar", "Kubus", "Pipih"],
+                answer: "Panjang dengan rambut akar"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Ketika kamu terluka, darahmu akan membeku. Ini berkat sel-sel darah tertentu yang berperan dalam pembekuan darah. Sel tersebut adalah...",
+                options: ["Sel darah merah", "Sel darah putih", "Trombosit (keping darah)", "Plasma darah"],
+                answer: "Trombosit (keping darah)"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Sel-sel yang melapisi permukaan tubuh, seperti kulit atau lapisan dalam mulut, disebut sel...",
+                options: ["Otot", "Saraf", "Epitel", "Tulang"],
+                answer: "Epitel"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Organ yang berfungsi memompa darah ke seluruh tubuh adalah jantung. Jantung tersusun atas jaringan sel...",
+                options: ["Sel saraf", "Sel epitel", "Sel otot jantung", "Sel darah"],
+                answer: "Sel otot jantung"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Tumbuhan memiliki sel-sel khusus di daun yang bertugas membuka dan menutup 'mulut' daun (stomata) untuk mengatur pertukaran gas. Sel ini adalah...",
+                options: ["Sel parenkim", "Sel penjaga", "Sel kolenkim", "Sel sklerenkim"],
+                answer: "Sel penjaga"
+            },
+            {
+                topic: "Spesialisasi Sel",
+                question: "Contoh organ pada tumbuhan yang tersusun dari berbagai jenis jaringan sel adalah...",
+                options: ["Akar", "Sel daun", "Kloroplas", "Dinding sel"],
+                answer: "Akar"
+            }
+        ];
+
+        const timeLimitInMinutes = 40;
+        let timeLeft = timeLimitInMinutes * 60; // seconds
+        let timerInterval;
+
+        const quizForm = document.getElementById('quizForm');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const timerDisplay = document.getElementById('timer');
+        const resultsDiv = document.getElementById('results');
+        const resultNama = document.getElementById('resultNama');
+        const scoreDisplay = document.getElementById('score');
+        const messageDisplay = document.getElementById('message');
+        const answerDetailsDiv = document.getElementById('answerDetails');
+
+        // Durasi cooldown: 3 jam dalam milidetik
+        const cooldownDuration = 3 * 60 * 60 * 1000;
+        const lastQuizCompletionKey = 'lastQuizCompletionTime';
+
+        // Fungsi untuk mengacak array (algoritma Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Fungsi untuk menghasilkan dan menampilkan pertanyaan
+        function generateQuestions() {
+            // Pastikan jumlah soal adalah 40
+            if (questions.length !== 40) {
+                console.error("Jumlah soal tidak sesuai (harus 40). Saat ini ada: " + questions.length);
+                alert("Terjadi kesalahan: Jumlah soal tidak sesuai. Harap hubungi pengembang.");
+                return;
+            }
+            
+            shuffleArray(questions); // Acak urutan pertanyaan
+            questionsContainer.innerHTML = ''; // Kosongkan container sebelumnya
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                const shuffledOptions = [...q.options];
+                shuffleArray(shuffledOptions); // Acak urutan pilihan jawaban
+
+                questionDiv.innerHTML = `
+                    <p>${index + 1}. ${q.question}</p>
+                    <div class="options">
+                        ${shuffledOptions.map((option) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${option}"> ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Fungsi untuk memulai timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `Waktu tersisa: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu habis! Kuis akan otomatis disubmit.");
+                    quizForm.dispatchEvent(new Event('submit'));
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Penanganan saat formulir disubmit
+        quizForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearInterval(timerInterval);
+
+            let totalScore = 0;
+            const pointsPerCorrect = 2.5; // 100 / 40 soal = 2.5 poin per soal
+            const maxPossibleScore = questions.length * pointsPerCorrect; // 40 * 2.5 = 100
+
+            const answers = {};
+
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? selectedOption.value : null;
+                answers[`q${index}`] = userAnswer;
+
+                if (userAnswer === q.answer) {
+                    totalScore += pointsPerCorrect;
+                }
+            });
+
+            // Simpan waktu penyelesaian kuis ke Local Storage
+            localStorage.setItem(lastQuizCompletionKey, Date.now());
+
+            // Tampilkan hasil
+            resultNama.textContent = document.getElementById('nama').value;
+            scoreDisplay.textContent = `${totalScore} / ${maxPossibleScore}`;
+
+            // Tentukan pesan berdasarkan skor
+            if (totalScore >= 70) {
+                messageDisplay.textContent = "Selamat Anda Pemenang!";
+                messageDisplay.style.color = "green";
+            } else {
+                messageDisplay.textContent = "Anda Belum Beruntung, Belajar Lagi Ya.";
+                messageDisplay.style.color = "red";
+            }
+
+            // Tampilkan detail jawaban
+            answerDetailsDiv.innerHTML = '';
+            questions.forEach((q, index) => {
+                const userAnswer = answers[`q${index}`];
+                const detailDiv = document.createElement('p');
+                let answerStatusClass = '';
+                let userAnswerText = userAnswer !== null ? userAnswer : 'Tidak dijawab';
+
+                if (userAnswer === q.answer) {
+                    answerStatusClass = 'correct';
+                } else if (userAnswer !== null) {
+                    answerStatusClass = 'incorrect';
+                } else {
+                    answerStatusClass = ''; // For unanswered questions, no specific class needed
+                }
+
+                detailDiv.innerHTML = `
+                    <strong>${index + 1}. ${q.question}</strong><br>
+                    Jawaban Anda: <span class="${answerStatusClass}">
+                        ${userAnswerText}
+                    </span><br>
+                    Kunci Jawaban: <span class="correct">${q.answer}</span>
+                `;
+                answerDetailsDiv.appendChild(detailDiv);
+            });
+
+            quizForm.style.display = 'none';
+            resultsDiv.style.display = 'block';
+        });
+
+        // Inisialisasi kuis dan cek cooldown saat halaman dimuat
+        window.onload = function() {
+            const lastCompletionTime = localStorage.getItem(lastQuizCompletionKey);
+            if (lastCompletionTime) {
+                const timeElapsed = Date.now() - parseInt(lastCompletionTime);
+                if (timeElapsed < cooldownDuration) {
+                    const remainingTime = cooldownDuration - timeElapsed;
+                    const minutes = Math.floor(remainingTime / (1000 * 60));
+                    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                    quizForm.style.display = 'none';
+                    timerDisplay.style.display = 'none';
+                    document.getElementById('timeLimitDisplay').style.display = 'none';
+                    const cooldownMessageDiv = document.createElement('div');
+                    cooldownMessageDiv.classList.add('cooldown-message');
+                    cooldownMessageDiv.innerHTML = `
+                        Anda telah menyelesaikan kuis ini. <br>
+                        Silakan coba lagi dalam **${minutes.toString().padStart(2, '0')} menit dan ${seconds.toString().padStart(2, '0')} detik**.
+                    `;
+                    document.querySelector('.container').insertBefore(cooldownMessageDiv, document.getElementById('quizForm'));
+                    return;
+                }
+            }
+            // Jika tidak ada cooldown atau cooldown sudah berakhir, inisialisasi kuis
+            generateQuestions();
+            startTimer();
+        };
+    </script>
+</body>
+</html>
